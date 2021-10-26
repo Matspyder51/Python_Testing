@@ -5,14 +5,14 @@ from datetime import datetime
 
 def loadClubs():
     with open('clubs.json') as c:
-         listOfClubs = json.load(c)['clubs']
-         return listOfClubs
+        listOfClubs = json.load(c)['clubs']
+        return listOfClubs
 
 
 def loadCompetitions():
     with open('competitions.json') as comps:
-         listOfCompetitions = json.load(comps)['competitions']
-         return listOfCompetitions
+        listOfCompetitions = json.load(comps)['competitions']
+        return listOfCompetitions
 
 
 app = Flask(__name__)
@@ -57,6 +57,15 @@ def purchasePlaces():
         flash('This competition is passed, you can\'t redeem anymore')
         return render_template('welcome.html', club=club, competitions=competitions)
     placesRequired = int(request.form['places'])
+    if placesRequired > 12:
+        flash('You can\'t redeem more than 12 places')
+        return render_template('welcome.html', club=club, competitions=competitions)
+    if int(competition['numberOfPlaces']) < placesRequired:
+        flash('Not enough places available')
+        return render_template('welcome.html', club=club, competitions=competitions)
+    if (placesRequired > int(club['points'])):
+        flash('Your don\'t have enough points')
+        return render_template('welcome.html', club=club, competitions=competitions)
     competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
     club["points"] = str(int(club["points"]) - placesRequired)
     flash('Great-booking complete!')
