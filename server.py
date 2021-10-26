@@ -1,5 +1,6 @@
 import json
 from flask import Flask,render_template,request,redirect,flash,url_for
+from datetime import datetime
 
 
 def loadClubs():
@@ -50,6 +51,11 @@ def book(competition,club):
 def purchasePlaces():
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
     club = [c for c in clubs if c['name'] == request.form['club']][0]
+    current_date = datetime.today()
+    competition_date = datetime.strptime(competition["date"], '%Y-%m-%d %H:%M:%S')
+    if (current_date > competition_date):
+        flash('This competition is passed, you can\'t redeem anymore')
+        return render_template('welcome.html', club=club, competitions=competitions)
     placesRequired = int(request.form['places'])
     competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
     club["points"] = str(int(club["points"]) - placesRequired)
