@@ -1,4 +1,5 @@
 import json
+import math
 from flask import Flask,render_template,request,redirect,flash,url_for
 
 
@@ -52,11 +53,12 @@ def purchasePlaces():
     if int(competition['numberOfPlaces']) < placesRequired:
         flash('Not enough places available')
         return render_template('welcome.html', club=club, competitions=competitions)
-    if (placesRequired > int(club['points'])):
+    offered_places = math.floor(placesRequired / 5)
+    if ((placesRequired - offered_places) > int(club['points'])):
         flash('Your don\'t have enough points')
         return render_template('welcome.html', club=club, competitions=competitions)
-    competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
-    flash('Great-booking complete!')
+    competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-(placesRequired - offered_places)
+    flash(f"Great-booking complete! {offered_places} was giften")
     return render_template('welcome.html', club=club, competitions=competitions)
 
 
