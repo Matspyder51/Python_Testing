@@ -6,12 +6,20 @@ class User(HttpUser):
     def index(self):
         self.client.get("/")
 
-    def on_start(self):
+    # def on_start(self):
+    #     self.client.post("/showSummary", {"email": "john@simplylift.co"})
+
+    @task
+    def summary(self):
         self.client.post("/showSummary", {"email": "john@simplylift.co"})
 
     @task
     def board(self):
         self.client.get("/board")
+
+    @task
+    def purchasePage(self):
+        self.client.get("/book/Winter Land/Iron Temple")
 
     @task
     def purchaseLift(self):
